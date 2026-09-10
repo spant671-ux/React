@@ -1,6 +1,10 @@
+import Chai from "./chai"
 function App() {
   return (
-    <h1>Hellor World! Its my first line written in React.</h1>
+    <>
+    <chai />
+    <h1>Hello World! Its my first line written in React.</h1>
+    </>
   );
 }
 

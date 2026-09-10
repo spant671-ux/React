@@ -1,7 +1,12 @@
+import Chai from "./chai"
 function App() {
 
   return (
-    <h1>My first line written in React with vite.</h1>
+    <>
+    <Chai/>
+    <h3>What's Up</h3>
+    <p>Test Paragraph</p>
+    </>
   )
 }
 
