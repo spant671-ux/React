@@ -1,8 +1,8 @@
-import Chai from "./chai"
+import Chai from "./Chai"
 function App() {
   return (
     <>
-    <chai />
+    <Chai />
     <h1>Hello World! Its my first line written in React.</h1>
     </>
   );
