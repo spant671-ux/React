@@ -1,29 +1,35 @@
 # ⚛️ React Learning Journey
 
-Welcome to my React learning repository! This repo documents my journey mastering React from the ground up, covering practical code projects, experiments, and detailed study notes.
+Welcome to my React learning repository! This repo documents my journey mastering React from the ground up, covering practical code projects, experiments, and structured study notes.
 
 ---
 
 ## 📚 Table of Contents
-- [📖 Study Notes (Notebook Companion)](#-study-notes-notebook-companion)
+- [📖 Study Notes](#-study-notes)
 - [📂 Projects Directory](#-projects-directory)
 - [🚀 Getting Started](#-getting-started)
 - [🛠️ Tech Stack & Tools](#️-tech-stack--tools)
 
 ---
 
-## 📖 Study Notes (Notebook Companion)
-All conceptual explanations, core definitions, project structure breakdowns, and key rules to copy into your physical notebook are maintained in:
+## 📖 Study Notes
+Comprehensive, neatly organized study notes and conceptual breakdowns are documented in:
 👉 **[NOTES.md](./NOTES.md)**
+
+### Topics Covered in Notes:
+1. **What is React?** – Core philosophy, library vs. framework, Virtual DOM, and key features.
+2. **History of React** – From FaxJS (2011) to React 19 (Actions, Compiler, Server Components).
+3. **Project Structure** – Full directory breakdown of modern Vite + React setups.
+4. **File & Folder Breakdown** – Roles of `index.html`, `main.jsx`, `App.jsx`, `package.json`, etc.
+5. **Execution Flow** – Step-by-step lifecycle from browser request to DOM rendering.
 
 ---
 
 ## 📂 Projects Directory
 
-| # | Folder | Setup Type | Description | Key Learnings |
+| # | Folder | Setup Type | React Version | Description |
 |---|---|---|---|---|
-| 01 | [`01_basicreact`](./01_basicreact) | Create React App (CRA) | Classic React starter project using Webpack | CRA folder structure, `index.js`, basic components (`Chai.js`) |
-| 02 | [`01_vitereact`](./01_vitereact) | Vite + React | Modern, ultra-fast React setup powered by Vite & esbuild | Vite folder structure, `main.jsx`, strict `.jsx` naming, React Fragments |
+| 01 | [`react19_vite`](./react19_vite) | Vite + React | React 19 (`^19.2.8`) | Modern, lightning-fast starter project using Vite and React 19 |
 
 *(More projects will be added here as the journey progresses!)*
 
@@ -31,27 +37,26 @@ All conceptual explanations, core definitions, project structure breakdowns, and
 
 ## 🚀 Getting Started
 
-To run any of the project folders locally:
+To run the React 19 project locally:
 
-### 1. Vite Project (`01_vitereact`)
 ```bash
-cd 01_vitereact
+# 1. Navigate to the project folder
+cd react19_vite
+
+# 2. Install dependencies
 npm install
+
+# 3. Start the local development server
 npm run dev
 ```
 
-### 2. Basic React Project (`01_basicreact`)
-```bash
-cd 01_basicreact
-npm install
-npm start
-```
+Once running, open your browser and navigate to the local URL (usually `http://localhost:5173`).
 
 ---
 
 ## 🛠️ Tech Stack & Tools
-- **Library:** [React](https://react.dev/)
-- **Build Tools:** [Vite](https://vitejs.dev/), Create React App (CRA)
+- **Library:** [React 19](https://react.dev/)
+- **Build Tool:** [Vite](https://vitejs.dev/)
 - **Language:** JavaScript (ES6+), JSX
 - **Package Manager:** npm
 
