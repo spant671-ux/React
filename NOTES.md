@@ -11,6 +11,7 @@ A neat, structured companion covering core concepts, internal mechanisms, and pr
 4. [JSX & Evaluated Expressions](#4-jsx--evaluated-expressions)
 5. [How React Works Under the Hood (Custom React)](#5-how-react-works-under-the-hood-custom-react)
 6. [State & Hooks: `useState` (Counter Project)](#6-state--hooks-usestate-counter-project)
+7. [Virtual DOM, Reconciliation & React Fiber](#7-virtual-dom-reconciliation--react-fiber)
 
 ---
 
@@ -216,3 +217,54 @@ function App() {
 2. **Batching & Functional Updates**:
    - Calling `setCounter(counter + 1)` multiple times in a row within one handler batches the calls (React sees the same snapshot value).
    - Use the callback form `setCounter(prev => prev + 1)` when the new state depends directly on the previous state to guarantee accuracy.
+
+---
+
+## 7. Virtual DOM, Reconciliation & React Fiber
+
+### 1. What is the Virtual DOM (VDOM)?
+The **Real DOM** represents the browser's parsed tree of HTML elements. Manipulating the real DOM directly is expensive because any change can trigger **browser reflow (layout recalculation)** and **repaint**.
+
+The **Virtual DOM** is a lightweight, in-memory representation of the real DOM created as plain JavaScript objects.
+- When state changes, React creates a new Virtual DOM tree.
+- Instead of re-rendering the whole page, React compares this new tree with the previous one.
+- Only the specific nodes that changed are patched in the actual browser DOM.
+
+---
+
+### 2. What is Reconciliation?
+**Reconciliation** is the algorithm behind React that compares two Virtual DOM trees to determine which parts of the real DOM need to be updated.
+
+#### The Diffing Heuristic (O(n) Complexity):
+A generic tree comparison algorithm takes $O(n^3)$ time (too slow for real-time UIs). React achieves an optimal $O(n)$ comparison by relying on two key assumptions:
+
+1. **Different Element Types Produce Different Trees**:
+   - If a `<div>` changes to a `<span>`, React destroys the entire old tree below `<div>` and rebuilds the new `<span>` tree from scratch.
+2. **Keys in Lists (`key` prop)**:
+   - When rendering lists of children, React uses the `key` attribute to match children in the original tree with children in the new tree.
+   - Without unique keys, adding an item at the beginning causes React to mutate every single child. With unique keys, React knows only one new element was inserted and moves the rest without re-rendering them.
+
+---
+
+### 3. What is React Fiber?
+
+**React Fiber** is the complete rewrite of React's core reconciliation engine introduced in **React 16**.
+
+#### Why Was Fiber Needed? (The Problem with the Old Reconciler)
+Before React 16, React used the **Stack Reconciler**:
+- It processed updates synchronously using standard JavaScript function call stacks.
+- Once reconciliation started, it **could not be interrupted** or paused until the entire component tree finished rendering.
+- If the tree was large, the main thread was blocked, causing dropped animation frames, input lag, and a stuttering UI ("jank").
+
+#### Core Goals of Fiber:
+Fiber changed the reconciler from a synchronous recursive stack to an **incremental, asynchronous work scheduler**.
+
+Each component/DOM node is represented as a **Fiber node** (a unit of work / virtual stack frame).
+
+Key capabilities enabled by Fiber:
+- **Pause & Resume Work**: Split rendering into small chunks and yield back control to the browser between chunks.
+- **Priority-Based Scheduling**: Assign different priorities to different updates:
+  - **High Priority**: Immediate user inputs (typing, clicking, animations).
+  - **Low Priority**: Off-screen data rendering, background API fetches.
+- **Abort & Reuse Work**: Throw away in-progress render work if a newer, higher-priority update arrives.
+- **Foundation for Concurrency**: Paved the way for Concurrent Mode, `startTransition`, and Suspense in React 18 & 19.

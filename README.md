@@ -24,6 +24,7 @@ All conceptual explanations, architectural breakdowns, rules, and interview note
 4. **JSX & Evaluated Expressions** – Syntax rules, fragments `<>`, and expressions inside `{}`.
 5. **How React Works Under the Hood** – JSX compilation pipeline and building a custom renderer (`customReact`).
 6. **State & Hooks (`useState`)** – Why normal variables fail, state batching, and functional updates (`prevCounter`).
+7. **Virtual DOM, Reconciliation & Fiber** – How the diffing algorithm works ($O(n)$ heuristic, keys in lists) and how React Fiber enables priority-based scheduling.
 
 ---
 
