@@ -10,15 +10,13 @@ function App() {
   const addValue = () =>{
     
     // counter = counter+1;
-    setCounter(counter + 1)
-    console.log('clicked', counter)
+    setCounter((previous) => Math.min(previous + 1, 20))
   }
 
   const removeValue = () =>{
     
     // counter = counter+1;
-    setCounter(counter - 1)
-    console.log('clicked', counter)
+    setCounter((previous) => Math.max(previous - 1, 0))
   }
 
   return (
