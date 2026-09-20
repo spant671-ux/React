@@ -12,6 +12,7 @@ A neat, structured companion covering core concepts, internal mechanisms, and pr
 5. [How React Works Under the Hood (Custom React)](#5-how-react-works-under-the-hood-custom-react)
 6. [State & Hooks: `useState` (Counter Project)](#6-state--hooks-usestate-counter-project)
 7. [Virtual DOM, Reconciliation & React Fiber](#7-virtual-dom-reconciliation--react-fiber)
+8. [Tailwind CSS & Props (`03tailwind-props`)](#8-tailwind-css--props-03tailwind-props)
 
 ---
 
@@ -268,3 +269,76 @@ Key capabilities enabled by Fiber:
   - **Low Priority**: Off-screen data rendering, background API fetches.
 - **Abort & Reuse Work**: Throw away in-progress render work if a newer, higher-priority update arrives.
 - **Foundation for Concurrency**: Paved the way for Concurrent Mode, `startTransition`, and Suspense in React 18 & 19.
+
+---
+
+## 8. Tailwind CSS & Props (`03tailwind-props`)
+
+### 1. Modern Tailwind CSS v4 Setup (Vite + React)
+In Tailwind CSS v4, setup is significantly streamlined without needing `tailwind.config.js` or `postcss.config.js`:
+
+1. **Install dependencies**:
+   ```bash
+   npm i tailwindcss @tailwindcss/vite
+   ```
+2. **Configure Vite plugin (`vite.config.js`)**:
+   ```javascript
+   import { defineConfig } from 'vite'
+   import react from '@vitejs/plugin-react'
+   import tailwindcss from '@tailwindcss/vite'
+
+   export default defineConfig({
+     plugins: [react(), tailwindcss()],
+   })
+   ```
+3. **Import in CSS (`src/index.css`)**:
+   ```css
+   @import "tailwindcss";
+   ```
+
+---
+
+### 2. Understanding Props in React
+**Props** (short for *properties*) are the primary mechanism for passing data from a parent component down to a child component, making components modular and reusable.
+
+#### Passing Props:
+- **Strings**: Pass directly with quotes:
+  ```jsx
+  <Card channel="chai" btnText="Click Me" />
+  ```
+- **Non-string values (Numbers, Objects, Arrays, Booleans)**: Must be wrapped in curly braces `{}`:
+  ```jsx
+  <Card
+    count={42}
+    myObj={{ username: "Alex", age: 25 }}
+    myArr={[1, 2, 3]}
+    isLoggedIn={true}
+  />
+  ```
+
+#### Receiving & Consuming Props:
+
+**Approach 1: Using the `props` object**
+```jsx
+function Card(props) {
+  return <h2>{props.channel}</h2>;
+}
+```
+
+**Approach 2: Destructuring with Default Values (Recommended)**
+Destructure specific props directly in the function parameters and assign fallback defaults:
+```jsx
+function Card({ channel, btnText = "Read more" }) {
+  return (
+    <div className="max-w-xs rounded-md bg-black text-white p-4">
+      <h2>{channel}</h2>
+      <button className="bg-gray-800 p-2 rounded">{btnText}</button>
+    </div>
+  );
+}
+```
+
+#### Core Rules of Props:
+- **Read-Only (Immutable)**: A child component must **never** modify its own `props`. Props are pure inputs.
+- **Unidirectional**: Props always flow downward (Parent ➡️ Child).
+

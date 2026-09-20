@@ -25,6 +25,7 @@ All conceptual explanations, architectural breakdowns, rules, and interview note
 5. **How React Works Under the Hood** – JSX compilation pipeline and building a custom renderer (`customReact`).
 6. **State & Hooks (`useState`)** – Why normal variables fail, state batching, and functional updates (`prevCounter`).
 7. **Virtual DOM, Reconciliation & Fiber** – How the diffing algorithm works ($O(n)$ heuristic, keys in lists) and how React Fiber enables priority-based scheduling.
+8. **Tailwind CSS & Props** – Modern Tailwind CSS v4 setup with Vite, passing and destructuring props, and default values.
 
 ---
 
@@ -36,6 +37,7 @@ All conceptual explanations, architectural breakdowns, rules, and interview note
 | 02 | [`01_vitereact`](./01_vitereact) | Vite + React | Modern, lightning-fast React setup | Vite architecture, `main.jsx`, strict `.jsx` requirement, `React.createElement` testing |
 | 03 | [`customReact`](./customReact) | Vanilla JS | Building a custom React rendering engine from scratch | Understanding how React elements convert into actual browser DOM nodes (`customRender`) |
 | 04 | [`02counter`](./02counter) | Vite + React | Counter application demonstrating React state | `useState` hook, UI synchronization, value bounds (0–20), functional state updates (`prevCounter`) |
+| 05 | [`03tailwind-props`](./03tailwind-props) | Vite + Tailwind CSS v4 | Reusable Card component with custom props | Tailwind CSS v4 integration (`@tailwindcss/vite`), passing props (strings, objects), destructuring & default values |
 
 ---
 
@@ -43,9 +45,9 @@ All conceptual explanations, architectural breakdowns, rules, and interview note
 
 To explore and run any of the projects locally:
 
-### 1. Modern Vite Project (`01_vitereact` or `02counter`)
+### 1. Modern Vite Projects (`01_vitereact`, `02counter`, or `03tailwind-props`)
 ```bash
-cd 01_vitereact   # or cd 02counter
+cd 03tailwind-props   # or cd 01_vitereact / 02counter
 npm install
 npm run dev
 ```
@@ -64,8 +66,9 @@ The custom React project uses plain HTML and JavaScript:
 ---
 
 ## 🛠️ Tech Stack & Tools
-- **Library:** [React](https://react.dev/)
+- **Library:** [React 19](https://react.dev/)
 - **Build Tools:** [Vite](https://vitejs.dev/), Create React App (CRA)
+- **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
 - **Language:** JavaScript (ES6+), JSX
 - **Package Manager:** npm
 
