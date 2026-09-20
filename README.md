@@ -22,6 +22,7 @@ Comprehensive, neatly organized study notes and conceptual breakdowns are docume
 3. **Project Structure** – Full directory breakdown of modern Vite + React setups.
 4. **File & Folder Breakdown** – Roles of `index.html`, `main.jsx`, `App.jsx`, `package.json`, etc.
 5. **Execution Flow** – Step-by-step lifecycle from browser request to DOM rendering.
+6. **JSX (JavaScript XML)** – Definition, syntax rules, curly braces `{}`, and compiler transform under the hood.
 
 ---
 

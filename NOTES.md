@@ -112,3 +112,105 @@ my-react-app/
 3. **`main.jsx` runs** ➡️ finds `<div id="root"></div>` in the DOM.
 4. **React initializes** ➡️ `createRoot(document.getElementById('root')).render(<App />)`.
 5. **UI renders** ➡️ `App.jsx` returns JSX, which React converts into DOM nodes and paints to the screen.
+
+---
+
+## 6. Understanding JSX (JavaScript XML)
+
+**JSX** is a syntax extension for JavaScript that looks similar to HTML. It allows you to write markup and UI logic together in the same file.
+
+> **Important**: JSX is **not** valid HTML, and web browsers cannot read it directly. It must be compiled into regular JavaScript before running in the browser.
+
+### Key Rules of JSX:
+
+1. **Return a Single Root Element**
+   - A component must return only one parent element.
+   - If you don't want to add an extra `<div>` to the real DOM, wrap elements in a **React Fragment**:
+     ```jsx
+     // Empty fragment syntax:
+     return (
+       <>
+         <h1>Title</h1>
+         <p>Description</p>
+       </>
+     );
+     ```
+   *(Reason: A JavaScript function can only return a single value/object).*
+
+2. **Close All Tags**
+   - Every tag must be explicitly closed.
+   - Self-closing tags require a trailing slash: `<img />`, `<input />`, `<br />`, `<hr />`.
+
+3. **camelCase Naming Convention for Attributes**
+   - Because JSX turns into JavaScript, attributes follow JavaScript variable naming conventions (camelCase):
+     - `class` ➡️ `className` (`class` is a reserved keyword in JS)
+     - `for` ➡️ `htmlFor` (`for` is reserved in JS)
+     - `onclick` ➡️ `onClick`
+     - `tabindex` ➡️ `tabIndex`
+
+---
+
+## 7. Embedding JavaScript in JSX `{}`
+
+You can embed any valid JavaScript **expression** inside JSX using curly braces `{}`.
+
+```jsx
+function UserCard() {
+  const username = "Alex";
+  const unreadMessages = 5;
+
+  return (
+    <div>
+      {/* 1. Variables */}
+      <h2>Welcome, {username}!</h2>
+
+      {/* 2. Math & Expressions */}
+      <p>Messages remaining: {10 - unreadMessages}</p>
+
+      {/* 3. Conditional Rendering (Ternary & AND operator) */}
+      <p>{unreadMessages > 0 ? "You have new mail" : "Inbox zero"}</p>
+      {unreadMessages > 0 && <span className="badge">New</span>}
+
+      {/* 4. Inline Styling (Object passed into {}) */}
+      <p style={{ color: "royalblue", fontWeight: "bold" }}>Active Now</p>
+    </div>
+  );
+}
+```
+
+> **Rule of Thumb**: You can only put **expressions** (things that evaluate to a value) inside `{}`. You cannot write statements directly inside `{}` like `if...else` or `for` loops (use ternary operators or array `.map()` instead).
+
+---
+
+## 8. How JSX Works Under the Hood
+
+When Vite or a bundler builds your code, a compiler (like Babel, SWC, or esbuild) converts JSX into standard JavaScript function calls:
+
+### What you write (JSX):
+```jsx
+const element = <h1 className="title">Hello World</h1>;
+```
+
+### What the compiler produces (Compiled JS):
+```javascript
+// React 17+ modern JSX transform:
+import { jsx as _jsx } from 'react/jsx-runtime';
+const element = _jsx('h1', { className: 'title', children: 'Hello World' });
+
+// Or classic syntax (React.createElement):
+const element = React.createElement('h1', { className: 'title' }, 'Hello World');
+```
+
+### The Output (React Element Object):
+React generates a plain JavaScript object describing the DOM node:
+```javascript
+{
+  type: 'h1',
+  props: {
+    className: 'title',
+    children: 'Hello World'
+  }
+}
+```
+React uses this object to build and update the **Virtual DOM**, and then reconciles changes with the actual browser DOM.
+
