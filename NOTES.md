@@ -13,6 +13,7 @@ A neat, structured companion covering core concepts, internal mechanisms, and pr
 6. [State & Hooks: `useState` (Counter Project)](#6-state--hooks-usestate-counter-project)
 7. [Virtual DOM, Reconciliation & React Fiber](#7-virtual-dom-reconciliation--react-fiber)
 8. [Tailwind CSS & Props (`03tailwind-props`)](#8-tailwind-css--props-03tailwind-props)
+9. [Events & Dynamic Styling (`04bgChanger`)](#9-events--dynamic-styling-04bgchanger)
 
 ---
 
@@ -341,4 +342,56 @@ function Card({ channel, btnText = "Read more" }) {
 #### Core Rules of Props:
 - **Read-Only (Immutable)**: A child component must **never** modify its own `props`. Props are pure inputs.
 - **Unidirectional**: Props always flow downward (Parent ➡️ Child).
+
+---
+
+## 9. Events & Dynamic Styling (`04bgChanger`)
+
+### 1. The `onClick` Callback Rule in React
+Event handling in React differs fundamentally from standard HTML. React event listeners expect a **function reference**, not a function call.
+
+```jsx
+// ❌ WRONG: Function executes immediately during component render!
+// Returns undefined as the handler and causes infinite re-render loops.
+<button onClick={setColor("red")}>Red</button>
+
+// ⚠️ LIMITED: Passes function reference, but cannot pass custom arguments.
+// Automatically receives the event object 'e' as the first argument.
+<button onClick={setColor}>Red</button>
+
+// ✅ CORRECT: Wraps the function call inside an arrow function.
+// React receives a function reference that executes ONLY when clicked.
+<button onClick={() => setColor("red")}>Red</button>
+```
+
+---
+
+### 2. Dynamic Inline Styling with State
+In React, inline styling is defined using JavaScript objects rather than CSS strings:
+
+```jsx
+<div
+  className="w-full h-screen duration-200"
+  style={{ backgroundColor: color }}
+>
+```
+
+- **Double Curly Braces `{{ }}`**:
+  - The outer `{}` tells JSX to evaluate a JavaScript expression.
+  - The inner `{}` defines a JavaScript object `{ backgroundColor: color }`.
+- **CSS Properties in camelCase**:
+  - `background-color` ➡️ `backgroundColor`
+  - `font-size` ➡️ `fontSize`
+  - `z-index` ➡️ `zIndex`
+- **Dynamic Reactivity**: When `color` state updates via `setColor`, React automatically updates the element's style attribute in the DOM without re-rendering the whole page.
+
+---
+
+### 3. Floating UI Patterns with Tailwind CSS
+In `04bgChanger`, a bottom floating control palette is built using:
+- **`fixed`**: Keeps the control bar pinned on top of the viewport regardless of scrolling.
+- **`bottom-12 inset-x-0`**: Places the bar 3rem from the bottom and spans it across full width for horizontal centering.
+- **`flex flex-wrap justify-center gap-3`**: Keeps color buttons centered and nicely spaced on all screen sizes.
+- **`duration-200`**: Smooth CSS background-color transitions when colors switch.
+
 

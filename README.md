@@ -26,6 +26,7 @@ All conceptual explanations, architectural breakdowns, rules, and interview note
 6. **State & Hooks (`useState`)** – Why normal variables fail, state batching, and functional updates (`prevCounter`).
 7. **Virtual DOM, Reconciliation & Fiber** – How the diffing algorithm works ($O(n)$ heuristic, keys in lists) and how React Fiber enables priority-based scheduling.
 8. **Tailwind CSS & Props** – Modern Tailwind CSS v4 setup with Vite, passing and destructuring props, and default values.
+9. **Events & Dynamic Styling** – Passing callback functions to `onClick`, preventing unwanted immediate execution, and dynamic inline styling objects.
 
 ---
 
@@ -38,6 +39,7 @@ All conceptual explanations, architectural breakdowns, rules, and interview note
 | 03 | [`customReact`](./customReact) | Vanilla JS | Building a custom React rendering engine from scratch | Understanding how React elements convert into actual browser DOM nodes (`customRender`) |
 | 04 | [`02counter`](./02counter) | Vite + React | Counter application demonstrating React state | `useState` hook, UI synchronization, value bounds (0–20), functional state updates (`prevCounter`) |
 | 05 | [`03tailwind-props`](./03tailwind-props) | Vite + Tailwind CSS v4 | Reusable Card component with custom props | Tailwind CSS v4 integration (`@tailwindcss/vite`), passing props (strings, objects), destructuring & default values |
+| 06 | [`04bgChanger`](./04bgChanger) | Vite + Tailwind CSS v4 | Interactive background color switcher | Event callbacks in `onClick` (`() => setColor(...)`), dynamic inline styling `style={{ backgroundColor: color }}`, floating UI palette |
 
 ---
 
@@ -45,9 +47,9 @@ All conceptual explanations, architectural breakdowns, rules, and interview note
 
 To explore and run any of the projects locally:
 
-### 1. Modern Vite Projects (`01_vitereact`, `02counter`, or `03tailwind-props`)
+### 1. Modern Vite Projects (`01_vitereact`, `02counter`, `03tailwind-props`, or `04bgChanger`)
 ```bash
-cd 03tailwind-props   # or cd 01_vitereact / 02counter
+cd 04bgChanger   # or cd 03tailwind-props / 02counter / 01_vitereact
 npm install
 npm run dev
 ```
