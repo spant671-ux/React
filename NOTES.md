@@ -15,6 +15,7 @@ A neat, structured companion covering core concepts, internal mechanisms, and pr
 8. [Tailwind CSS & Props (`03tailwind-props`)](#8-tailwind-css--props-03tailwind-props)
 9. [Events & Dynamic Styling (`04bgChanger`)](#9-events--dynamic-styling-04bgchanger)
 10. [`useCallback`, `useEffect` & `useRef` Hooks (`05passwordGenerator`)](#10-usecallback-useeffect--useref-hooks-05passwordgenerator)
+11. [Custom Hooks, `useId` & Component Design (`06currencyConvertor`)](#11-custom-hooks-useid--component-design-06currencyconvertor)
 
 ---
 
@@ -540,3 +541,182 @@ window.navigator.clipboard.writeText(password);
 │  and copy via navigator.clipboard.writeText()          │
 └────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## 11. Custom Hooks, `useId` & Component Design (`06currencyConvertor`)
+
+The Currency Convertor project introduces building **custom hooks**, designing **reusable controlled components**, fetching **live API data**, and structuring a scalable project with **barrel exports**.
+
+### 1. Custom Hooks — Building `useCurrencyInfo`
+
+A **custom hook** is a regular JavaScript function whose name starts with `use` and that can call other hooks internally. It encapsulates reusable stateful logic.
+
+```javascript
+import { useEffect, useState } from "react";
+
+function useCurrencyInfo(currency) {
+  const [data, setData] = useState({});
+
+  useEffect(() => {
+    fetch(
+      `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${currency}.json`
+    )
+      .then((res) => res.json())
+      .then((res) => setData(res[currency]));
+  }, [currency]);
+
+  return data;
+}
+
+export default useCurrencyInfo;
+```
+
+#### Key Design Principles:
+- **Naming Convention**: Must start with `use` — this tells React to apply hook rules (e.g., only call at the top level of a component or another hook).
+- **Encapsulation**: The `fetch` logic, loading state, and data transformation are hidden inside the hook. The consuming component just gets clean data back.
+- **Reactive Re-fetching**: Because `currency` is in the `useEffect` dependency array, the API is re-called automatically whenever the user switches the source currency.
+- **Return Value**: Can return anything — a single value, an array, or an object. Here it returns a plain object mapping currency codes to exchange rates.
+
+#### Usage in a Component:
+```jsx
+const currencyInfo = useCurrencyInfo(from);
+const options = Object.keys(currencyInfo); // ["usd", "inr", "eur", ...]
+```
+
+---
+
+### 2. `useId` — Generating Unique Accessible IDs
+
+`useId` is a React hook that generates a **unique, stable ID** that is consistent across server and client renders.
+
+```jsx
+import { useId } from 'react';
+
+function InputBox({ label, ... }) {
+  const amountInputId = useId();
+
+  return (
+    <div>
+      <label htmlFor={amountInputId}>{label}</label>
+      <input id={amountInputId} type="number" />
+    </div>
+  );
+}
+```
+
+#### Why Not Use Hardcoded IDs?
+- If the same component is rendered **multiple times** on a page (e.g., a "From" `InputBox` and a "To" `InputBox`), hardcoded IDs like `id="amount"` would **collide**, breaking accessibility and causing invalid HTML.
+- `useId` generates unique IDs like `:r1:`, `:r2:` automatically for each instance.
+- The `htmlFor` ↔ `id` link ensures screen readers correctly associate labels with their inputs.
+
+> **Rule**: Never use `useId` for generating `key` props in lists. Use `useId` exclusively for accessibility attributes (`id`, `htmlFor`, `aria-describedby`, etc.).
+
+---
+
+### 3. Reusable Component Design — `InputBox`
+
+The `InputBox` component demonstrates a **fully controlled, configurable component** pattern:
+
+```jsx
+function InputBox({
+  label,
+  amount,
+  onAmountChange,
+  onCurrencyChange,
+  currencyOptions = [],
+  selectCurrency = "usd",
+  amountDisable = false,
+  currencyDisable = false,
+  className = "",
+}) {
+  // Component renders an amount input + currency dropdown
+}
+```
+
+#### Design Patterns Used:
+1. **Controlled Component**: The `amount` value and `selectCurrency` value are controlled by the parent — the component never owns its own state.
+2. **Callback Props**: `onAmountChange` and `onCurrencyChange` let the parent decide how to handle changes.
+3. **Guard Checks**: `onAmountChange && onAmountChange(Number(e.target.value))` prevents errors when the callback is not provided (e.g., the "To" field has no `onAmountChange`).
+4. **Default Props via Destructuring**: Fallback values like `currencyOptions = []` and `className = ""` ensure the component works even with minimal props.
+5. **`className` Passthrough**: Accepting `className` as a prop and merging it with `` `bg-white p-3 ... ${className}` `` allows the parent to extend styling without modifying the component.
+
+---
+
+### 4. Barrel Exports — Clean Import Paths
+
+A **barrel file** (`index.js`) re-exports components from a directory, enabling cleaner import paths:
+
+```javascript
+// src/components/index.js
+import InputBox from './InputBox';
+export { InputBox };
+```
+
+#### Consumer Benefits:
+```jsx
+// Without barrel: importing from exact file path
+import InputBox from './components/InputBox';
+
+// With barrel: importing from the directory
+import { InputBox } from './components';
+```
+
+- **Scales well**: As you add more components (`Card`, `Header`, `Footer`), you add one line to the barrel file and all consumers get access via the same import path.
+- **Encapsulation**: Internal file structure can be refactored without updating every consumer's import path.
+
+---
+
+### 5. API Data Fetching with `fetch` + `useEffect`
+
+This project fetches live currency exchange rates from a free public API:
+
+```jsx
+useEffect(() => {
+  fetch(`https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${currency}.json`)
+    .then((res) => res.json())
+    .then((res) => setData(res[currency]));
+}, [currency]);
+```
+
+#### Key Concepts:
+- **`fetch` inside `useEffect`**: Side effects (API calls, subscriptions, DOM mutations) must be performed inside `useEffect`, never during the render phase.
+- **Chained `.then()`**: The `fetch` API returns a `Response` object. The first `.then()` parses the JSON body; the second `.then()` extracts the relevant nested data.
+- **Dependency-Driven Re-fetch**: Placing `currency` in the dependency array means the API is called once on mount and again whenever the source currency changes.
+
+---
+
+### 6. The Swap Pattern
+
+The swap button exchanges the "From" and "To" currencies along with their amounts:
+
+```jsx
+const swap = () => {
+  setFrom(to);
+  setTo(from);
+  setConvertedAmount(amount);
+  setAmount(convertedAmount);
+};
+```
+
+#### How React Batching Makes This Work:
+- All four `setState` calls use the **snapshot values** from the current render (`from`, `to`, `amount`, `convertedAmount`).
+- React **batches** these calls into a single re-render, so there's no intermediate inconsistent state.
+- Without batching, `setFrom(to)` would update `from` before `setTo(from)` runs, causing both to become the same value. Batching guarantees all updates see the same pre-update snapshot.
+
+---
+
+### 7. Form Handling with `onSubmit` & `e.preventDefault()`
+
+The conversion is triggered by a form submission instead of a plain button click:
+
+```jsx
+<form onSubmit={(e) => {
+  e.preventDefault();
+  convert();
+}}>
+```
+
+- **`e.preventDefault()`**: Prevents the browser's default form submission behavior (which would cause a full page reload).
+- **Why a `<form>` instead of just a `<button>`?**: Using a form allows the user to press **Enter** on the keyboard to trigger conversion, improving UX and accessibility.
+- **`type="button"` on Swap**: The swap button explicitly sets `type="button"` to prevent it from accidentally submitting the form (buttons inside a `<form>` default to `type="submit"`).
