@@ -14,6 +14,7 @@ A neat, structured companion covering core concepts, internal mechanisms, and pr
 7. [Virtual DOM, Reconciliation & React Fiber](#7-virtual-dom-reconciliation--react-fiber)
 8. [Tailwind CSS & Props (`03tailwind-props`)](#8-tailwind-css--props-03tailwind-props)
 9. [Events & Dynamic Styling (`04bgChanger`)](#9-events--dynamic-styling-04bgchanger)
+10. [`useCallback`, `useEffect` & `useRef` Hooks (`05passwordGenerator`)](#10-usecallback-useeffect--useref-hooks-05passwordgenerator)
 
 ---
 
@@ -394,4 +395,148 @@ In `04bgChanger`, a bottom floating control palette is built using:
 - **`flex flex-wrap justify-center gap-3`**: Keeps color buttons centered and nicely spaced on all screen sizes.
 - **`duration-200`**: Smooth CSS background-color transitions when colors switch.
 
+---
 
+## 10. `useCallback`, `useEffect` & `useRef` Hooks (`05passwordGenerator`)
+
+The Password Generator project brings together three essential React hooks beyond `useState`, demonstrating how to memoize functions, synchronize side effects, and directly access DOM nodes.
+
+### 1. `useCallback` – Memoizing Functions
+
+`useCallback` returns a **memoized version** of a callback function that only changes when one of its dependencies changes.
+
+```jsx
+import { useState, useCallback } from 'react';
+
+const passwordGenerator = useCallback(() => {
+  let pass = '';
+  let str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+
+  if (numberAllowed) str += '0123456789';
+  if (charAllowed) str += '!@#$%^&*-_+=[]{}`~';
+
+  for (let i = 0; i <= length; i++) {
+    let char = Math.floor(Math.random() * str.length + 1);
+    pass += str.charAt(char);
+  }
+  setPassword(pass);
+}, [length, numberAllowed, charAllowed, setPassword]);
+```
+
+#### Why Not Just Define a Regular Function?
+- In React, every re-render creates a **new instance** of every function defined inside the component.
+- `useCallback` caches the function reference and only recreates it when a listed dependency changes.
+- This is especially important when the function is passed as a dependency to other hooks (like `useEffect`) or passed as a prop to child components—it prevents unnecessary re-renders and infinite loops.
+
+#### Syntax:
+```jsx
+const memoizedFn = useCallback(() => {
+  // function body
+}, [dependency1, dependency2]);
+```
+
+---
+
+### 2. `useEffect` – Synchronizing Side Effects
+
+`useEffect` lets you run code **after render** as a side effect, and re-run it whenever specified dependencies change.
+
+```jsx
+import { useEffect } from 'react';
+
+useEffect(() => {
+  passwordGenerator();
+}, [length, numberAllowed, charAllowed, passwordGenerator]);
+```
+
+#### How It Works:
+- The callback inside `useEffect` runs **after the component mounts** (initial render).
+- It re-runs **only when** any value in the dependency array changes.
+- In this project, whenever the user adjusts the length slider or toggles the Numbers/Characters checkboxes, the password is automatically regenerated.
+
+#### Dependency Array Behavior:
+| Dependency Array | Behavior |
+|---|---|
+| `useEffect(fn)` | Runs after **every** render (no array = no caching) |
+| `useEffect(fn, [])` | Runs **only once** after the initial mount |
+| `useEffect(fn, [a, b])` | Runs on mount **and** whenever `a` or `b` changes |
+
+> **Important**: Omitting a dependency that the effect uses leads to stale closures (bugs where the effect reads outdated values). Always include every value the effect references.
+
+---
+
+### 3. `useRef` – Accessing DOM Elements Directly
+
+`useRef` creates a **mutable ref object** (`{ current: ... }`) that persists across re-renders without causing them.
+
+```jsx
+import { useRef } from 'react';
+
+// 1. Create the ref
+const passwordRef = useRef(null);
+
+// 2. Attach to a DOM element via the ref attribute
+<input
+  type="text"
+  value={password}
+  ref={passwordRef}
+  readOnly
+/>
+
+// 3. Access the DOM node via .current
+const copyPasswordToClipboard = useCallback(() => {
+  passwordRef.current?.select();
+  passwordRef.current?.setSelectionRange(0, 101);
+  window.navigator.clipboard.writeText(password);
+}, [password]);
+```
+
+#### Key Points:
+- **`useRef(null)`** initializes `passwordRef.current` to `null`.
+- **`ref={passwordRef}`** on the `<input>` element tells React to assign the real DOM node to `passwordRef.current` after mounting.
+- **`.select()`** programmatically highlights the text inside the input field, giving the user visual feedback that the password was copied.
+- **`.setSelectionRange(0, 101)`** ensures the entire password text is selected regardless of length.
+- **`useRef` does NOT trigger re-renders** when `.current` is mutated—unlike `useState`. This makes it ideal for storing DOM references, timers, or previous values.
+
+---
+
+### 4. Clipboard API: `window.navigator.clipboard`
+
+The modern `navigator.clipboard.writeText()` API is used to copy the generated password:
+
+```jsx
+window.navigator.clipboard.writeText(password);
+```
+
+- This is a **Promise-based** asynchronous API.
+- Requires the page to be served over **HTTPS** or **localhost** (Vite's dev server satisfies this).
+- Replaces the older, deprecated `document.execCommand('copy')` approach.
+
+---
+
+### 5. How the Three Hooks Work Together
+
+```
+┌─ useState ─────────────────────────────────────────────┐
+│  length, numberAllowed, charAllowed, password           │
+└───────────────────────┬─────────────────────────────────┘
+                        │ (dependencies change)
+                        ▼
+┌─ useCallback ──────────────────────────────────────────┐
+│  passwordGenerator() is memoized; only recreated       │
+│  when length / numberAllowed / charAllowed change      │
+└───────────────────────┬────────────────────────────────┘
+                        │ (passed as dependency)
+                        ▼
+┌─ useEffect ────────────────────────────────────────────┐
+│  Runs passwordGenerator() after render whenever        │
+│  any dependency changes → updates password state       │
+└───────────────────────┬────────────────────────────────┘
+                        │ (password displayed in input)
+                        ▼
+┌─ useRef ───────────────────────────────────────────────┐
+│  passwordRef.current points to the <input> DOM node    │
+│  Used by copyPasswordToClipboard() to select text      │
+│  and copy via navigator.clipboard.writeText()          │
+└────────────────────────────────────────────────────────┘
+```

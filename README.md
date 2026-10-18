@@ -27,6 +27,7 @@ All conceptual explanations, architectural breakdowns, rules, and interview note
 7. **Virtual DOM, Reconciliation & Fiber** – How the diffing algorithm works ($O(n)$ heuristic, keys in lists) and how React Fiber enables priority-based scheduling.
 8. **Tailwind CSS & Props** – Modern Tailwind CSS v4 setup with Vite, passing and destructuring props, and default values.
 9. **Events & Dynamic Styling** – Passing callback functions to `onClick`, preventing unwanted immediate execution, and dynamic inline styling objects.
+10. **`useCallback`, `useEffect` & `useRef` Hooks** – Memoizing functions, syncing side effects with dependencies, and accessing DOM elements via refs for clipboard operations.
 
 ---
 
@@ -40,6 +41,7 @@ All conceptual explanations, architectural breakdowns, rules, and interview note
 | 04 | [`02counter`](./02counter) | Vite + React | Counter application demonstrating React state | `useState` hook, UI synchronization, value bounds (0–20), functional state updates (`prevCounter`) |
 | 05 | [`03tailwind-props`](./03tailwind-props) | Vite + Tailwind CSS v4 | Reusable Card component with custom props | Tailwind CSS v4 integration (`@tailwindcss/vite`), passing props (strings, objects), destructuring & default values |
 | 06 | [`04bgChanger`](./04bgChanger) | Vite + Tailwind CSS v4 | Interactive background color switcher | Event callbacks in `onClick` (`() => setColor(...)`), dynamic inline styling `style={{ backgroundColor: color }}`, floating UI palette |
+| 07 | [`05passwordGenerator`](./05passwordGenerator) | Vite + Tailwind CSS v4 | Configurable password generator with copy-to-clipboard | `useCallback` for memoization, `useEffect` for side effects, `useRef` for DOM access, `window.navigator.clipboard` API |
 
 ---
 
@@ -47,9 +49,9 @@ All conceptual explanations, architectural breakdowns, rules, and interview note
 
 To explore and run any of the projects locally:
 
-### 1. Modern Vite Projects (`01_vitereact`, `02counter`, `03tailwind-props`, or `04bgChanger`)
+### 1. Modern Vite Projects (`01_vitereact`, `02counter`, `03tailwind-props`, `04bgChanger`, or `05passwordGenerator`)
 ```bash
-cd 04bgChanger   # or cd 03tailwind-props / 02counter / 01_vitereact
+cd 05passwordGenerator   # or cd 04bgChanger / 03tailwind-props / 02counter / 01_vitereact
 npm install
 npm run dev
 ```
