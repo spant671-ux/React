@@ -35,10 +35,13 @@ React/
 
 ## 📖 Study Notes & Handbooks
 
-All conceptual explanations, architectural breakdowns, rules, mental models, and interview cheat sheets are preserved in the dedicated study guides:
+All conceptual explanations, architectural breakdowns, rules, mental models, and interview cheat sheets are unified in a single centralised handbook:
 
-- 👉 **[Stage 1 Handbook: NOTES.md](./learning%201/NOTES.md)** — Core React philosophy, JSX compilation pipeline, Fiber reconciliation, `useState` batching, memoization rules, and custom hook guidelines.
-- 👉 **[Stage 2 Handbook: notes.md](./learning%202/notes.md)** — Comprehensive notes across 12 modules covering component lifecycles, event synthetic system, Context provider pattern, `createBrowserRouter` internals, and `react-hook-form` validation schemas.
+- 👉 **[📘 Centralised Handbook: NOTES.md](./NOTES.md)** — The complete study guide covering all 20 topics across all 3 stages, from React internals and Fiber to Redux Toolkit.
+
+The original per-stage handbooks are also preserved for reference:
+- **[Stage 1 Handbook: NOTES.md](./learning%201/NOTES.md)** — Core React philosophy, JSX compilation pipeline, Fiber reconciliation, `useState` batching, memoization rules, and custom hook guidelines.
+- **[Stage 2 Handbook: notes.md](./learning%202/notes.md)** — Comprehensive notes across 12 modules covering component lifecycles, event synthetic system, Context provider pattern, `createBrowserRouter` internals, and `react-hook-form` validation schemas.
 
 ### Key Conceptual Topics Covered Across the Repo:
 1. **What is React?** – Declarative UI paradigms, Virtual DOM, and state-driven reconciliation.
